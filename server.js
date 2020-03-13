@@ -1,8 +1,7 @@
 import expressConfig from './src/config/express.config';
+import envVariables from './src/config/environment.config';
 
-expressConfig().listen(3000, () => {
-   const port = 3000;
-   const environment = 'dev';
-   console.log('environment:', environment);
-   console.log('The server is working on port:', port);
+expressConfig().listen(envVariables.variables.port, () => {
+   console.log('environment:', process.env.APP_ENV);
+   console.log('The server is working on port:', envVariables.variables.port);
 });
