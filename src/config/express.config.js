@@ -1,12 +1,11 @@
 import express from 'express';
+import routesConfig from './routes.config'
 
 export default () => {
     const app = express();
 
-    // here comes all config that express needs (middleware, routes and stuff)
-    app.get('/teste', (req, res) => {
-        res.json('all is working');
-    });
+    // passa o express para o config das rotas
+    routesConfig(app);
 
     return app;
 };
