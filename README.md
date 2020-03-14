@@ -27,6 +27,9 @@
     - criar o model de usuario
     - insert user no controller (register)
     - add config no express.config pra ler json
+
+- authentication implementation
+    - 
     
 how to stop server port on windows
 netstat -ano | findstr port
