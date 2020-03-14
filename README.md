@@ -20,6 +20,13 @@
     - registrar no config de rotas
     - criar controller de rotas (aqui e uma classe)
     
+- config mongo
+    - criar mongo.config.js
+    - add url connection db no environment.dev e user e password no .env
+    - conectar o mondo no server.js (index.js)
+    - criar o model de usuario
+    - insert user no controller (register)
+    - add config no express.config pra ler json
     
 how to stop server port on windows
 netstat -ano | findstr port
