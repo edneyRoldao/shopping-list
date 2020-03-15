@@ -28,8 +28,16 @@
     - insert user no controller (register)
     - add config no express.config pra ler json
 
-- authentication implementation
-    - 
+- interceptor
+    - create interceptor
+    - add on route
+    
+- validator
+    - create validator
+    - add on route
+    - treat errors on controller
+    - validator no route
+    - tratamanto validator no controller
     
 how to stop server port on windows
 netstat -ano | findstr port

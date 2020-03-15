@@ -1,10 +1,17 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import UserModel from '../models/user.model';
+import { validationResult } from "express-validator";
+
 
 export default class AuthController {
 
     async register(req, res) {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return res.status(400).json(errors);
+        }
 
         // verificar se o email já existe
         const emailExist = await UserModel.findOne({email: req.body.email});
@@ -29,12 +36,18 @@ export default class AuthController {
             return res.status(201).json({userId: savedUser._id});
 
         } catch (err) {
+            console.log(err);
             return res.status(500).json('there was an unexpected error!');
         }
 
     }
 
     async login(req, res) {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return res.status(400).json(errors);
+        }
 
         // verificando se o usuario existe
         const user = await UserModel.findOne({email: req.body.email});
@@ -54,7 +67,7 @@ export default class AuthController {
 
         const accessToken = jwt.sign(payload, process.env.TOKEN_SECRET);
 
-        res.header('Authentication', accessToken);
+        res.header(process.env.TOKEN_HEADER_NAME, accessToken);
 
         return res.status(200).json('success');
     }
