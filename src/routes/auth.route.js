@@ -4,7 +4,6 @@ import loginValidator from '../validators/userLogin.validator';
 
 const router = express.Router();
 
-
 import AuthController from '../controllers/auth.controller';
 const controller = new AuthController();
 

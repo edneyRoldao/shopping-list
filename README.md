@@ -38,6 +38,12 @@
     - treat errors on controller
     - validator no route
     - tratamanto validator no controller
+
+Shopping list impl
+    - create model de category
+    - create route de category e registrou no config
+    - create service para inserir as categorias
+    - create controller de categoria
     
 how to stop server port on windows
 netstat -ano | findstr port
