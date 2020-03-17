@@ -22,4 +22,4 @@ const shoppingListSchema = Schema({
     }
 });
 
-export default mongoose.model('shoppingList', shoppingListSchema);
+export default mongoose.model('shopping-list', shoppingListSchema);

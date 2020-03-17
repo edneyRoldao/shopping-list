@@ -1,17 +1,11 @@
-import CategoryModel from '../models/category.model';
-import categoryService from '../services/category.service';
+import CategoryService from "../services/category.service";
+const service = new CategoryService();
 
 export default class CategoryController {
 
     async list(req, res) {
         try {
-            let categories = await CategoryModel.find();
-
-            if (!categories.length) {
-                categoryService();
-            }
-
-            categories = await CategoryModel.find();
+            const categories = await service.findAll();
             return res.status(200).json(categories);
 
         } catch (err) {

@@ -1,15 +1,26 @@
+import mongoose from 'mongoose';
 import { checkSchema } from 'express-validator';
+
+const ObjectId = mongoose.Types.ObjectId;
 
 export default () => {
     return checkSchema({
         userId: {
+            custom: {
+                errorMessage: 'the id format is invalid. It should be a string with 12 bytes or 24 hex characters',
+                options: value => ObjectId.isValid(value)
+            },
             exists: {
-                errorMessage: 'id usuario nao informado',
+                errorMessage: 'userId is required',
             }
         },
         categoryId: {
+            custom: {
+                errorMessage: 'the id format is invalid. It should be a string with 12 bytes or 24 hex characters',
+                options: value => ObjectId.isValid(value)
+            },
             exists: {
-                errorMessage: 'email is required',
+                errorMessage: 'categoryId is required',
             }
         },
         description: {
