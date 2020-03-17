@@ -54,14 +54,6 @@ export default class ShoppingListController {
         }
     }
 
-    async filter(req, res) {
-
-    }
-
-    async update(req, res) {
-
-    }
-
     async delete(req, res) {
         try {
             const listId = req.params.listId;
@@ -75,6 +67,14 @@ export default class ShoppingListController {
     }
 
     async getOne(req, res) {
+
+    }
+
+    async update(req, res) {
+
+    }
+
+    async filter(req, res) {
 
     }
 
