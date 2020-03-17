@@ -63,13 +63,13 @@ export default class AuthController {
             return res.status(400).json({errorMessage: 'email or password invalid!'});
         }
 
-        const payload = {username: user.name, permissions: ['all']};
+        const payload = {user: user, permissions: ['all']};
 
         const accessToken = jwt.sign(payload, process.env.TOKEN_SECRET);
 
         res.header(process.env.TOKEN_HEADER_NAME, accessToken);
 
-        return res.status(200).json('success');
+        return res.status(200).json({ userId: user._id });
     }
 
 }
