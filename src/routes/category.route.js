@@ -5,6 +5,6 @@ const router = express.Router();
 import CategoryController from "../controllers/category.controller";
 const controller = new CategoryController();
 
-router.get('/', controller.list);
+router.get('', tokenInterceptor, controller.getCategories);
 
 export default router;

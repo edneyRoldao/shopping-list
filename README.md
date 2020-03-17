@@ -45,5 +45,12 @@ Shopping list impl
     - create service para inserir as categorias
     - create controller de categoria
     
+The last
+    - categoryService foi refatorado (route.config, controller, server.js)
+    - createList refatorado
+    - adiconado validador do objectID na validator de shoppingList
+    - refatorando getLists
+    - adicionado validador gererico para os ids
+    
 how to stop server port on windows
 netstat -ano | findstr port

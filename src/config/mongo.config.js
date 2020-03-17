@@ -6,7 +6,11 @@ if (envVariables.variables.env === 'dev') {
 }
 
 export default () => {
-    mongoose.connect(envVariables.variables.mongoUrlConnection);
+    mongoose.connect(envVariables.variables.mongoUrlConnection, {
+        useCreateIndex: true,
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    });
 
     mongoose.connection.on('connected', () => {
         console.log('mongo is connected!');

@@ -6,23 +6,23 @@ import ShoppingListModel from '../models/list.model';
 
 export default class ShoppingListController {
 
-    async create(req, res) {
+    async createShoppingList(req, res) {
         try {
-            const errors = validationResult(req);
 
+            // validacao dos dados de entrada
+            const errors = validationResult(req);
             if (!errors.isEmpty()) {
                 return res.status(400).json(errors);
             }
 
-            // obter usuario
+            // obtendo e validando usuario
             const user = await UserModel.findOne({ _id: req.body.userId });
-
             if (!user) {
                 return res.status(400).json({errorMessage: 'user does not exist !'});
             }
 
-            const category = await CategoryModel.findOne({ _id: req.body.categoryId })
-
+            // obtendo e validando categoria
+            const category = await CategoryModel.findOne({ _id: req.body.categoryId });
             if (!category) {
                 return res.status(400).json({errorMessage: 'category does not exist !'});
             }
@@ -42,9 +42,15 @@ export default class ShoppingListController {
         }
     }
 
-    async list(req, res) {
+    async getLists(req, res) {
         try {
-            const userId = req.params.usuarioId;
+            // validacao dos dados de entrada
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json(errors);
+            }
+
+            const userId = req.params.userId;
             const list = await ShoppingListModel.find({ userId });
             return res.status(200).json(list);
 
