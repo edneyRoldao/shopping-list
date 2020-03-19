@@ -10,5 +10,11 @@ export default (app) => {
     app.use('/api/shopping-list', shoppingListRoute);
     app.use('/api/shopping-list-item', shoppingListItemRoute);
 
+    // used as test
+    app.get('/test', (req, res) => {
+
+    });
+
     app.get('*', (req, res) => res.render('notFound'));
+
 }

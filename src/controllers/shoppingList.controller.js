@@ -4,7 +4,7 @@ import CategoryModel from '../models/category.model';
 import ShoppingListModel from '../models/shoppingList.model';
 import mongoose from "mongoose";
 const ObjectId = mongoose.Types.ObjectId;
-
+import DateUtil from "../utils/date.util";
 
 export default class ShoppingListController {
 
@@ -51,27 +51,7 @@ export default class ShoppingListController {
                 return res.status(400).json(errors);
             }
 
-            const filter = {
-                userId: req.body.userId
-            };
-
-            if (req.query.description) {
-                filter.description = { $regex: `.*${req.query.description}.*` };
-            }
-
-            if (req.query.categoryId) {
-                const isInvalid = !ObjectId.isValid(req.query.categoryId);
-
-                if (isInvalid) {
-                    return res.status(400).json({errorMessage: 'categoryId is invalid. It should be a string with 12 bytes or 24 hex characters'})
-                }
-
-                filter.categoryId = req.query.categoryId;
-            }
-
-            if (req.query.created) {
-                filter.created = req.query.created;
-            }
+            const filter = filterBuilder(req);
 
             const lists = await ShoppingListModel.find(filter);
             return res.status(200).json(lists || []);
@@ -170,3 +150,27 @@ export default class ShoppingListController {
     }
 
 }
+
+const filterBuilder =  (req) => {
+    const filter = {
+        userId: req.body.userId
+    };
+
+    if (req.query.description) {
+        filter.description = { $regex: `.*${req.query.description}.*` };
+    }
+
+    if (req.query.categoryId) {
+        filter.categoryId = req.query.categoryId;
+    }
+
+    if (req.query.created) {
+        const dateUtil = new DateUtil();
+        const startDate = dateUtil.getStartDayOfDate(req.query.created);
+        const endDate = dateUtil.getEndDayOfDate(req.query.created);
+
+        filter.created = { $gte: startDate, $lte: endDate };
+    }
+
+    return filter;
+};

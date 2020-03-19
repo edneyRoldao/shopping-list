@@ -1,6 +1,7 @@
 import express from 'express';
-import objectIdValidator from '../validators/objectId.validator';
 import tokenInterceptor from '../interceptors/checkToken.interceptor';
+import objectIdValidator from '../validators/objectId.validator';
+import dateFormatValidator from '../validators/dateFormat.validator';
 import shoppingListValidator from '../validators/shoppingList.validator';
 
 const router = express.Router();
@@ -17,16 +18,34 @@ const controller = new ShoppingListController();
 /**
  * this resource supports filter as queryParams
  * FIELDS: description, categoryId, created
+ * by default required is true
  *
  */
-router.get('/', tokenInterceptor, objectIdValidator('userId'), controller.getAllLists);
+router.get('/',
+            tokenInterceptor,
+            objectIdValidator({name: 'userId'}, {name: 'categoryId', required: false}),
+            dateFormatValidator({name: 'created', required: true}),
+            controller.getAllLists);
 
-router.get('/:listId', tokenInterceptor, objectIdValidator('userId', 'listId'), controller.getOneList);
+router.get('/:listId',
+            tokenInterceptor,
+            objectIdValidator({name: 'userId'}, {name: 'listId'}),
+            controller.getOneList);
 
-router.post('/create', tokenInterceptor, objectIdValidator('userId', 'categoryId'), shoppingListValidator(), controller.createList);
+router.post('/create',
+            tokenInterceptor,
+            objectIdValidator({name: 'userId'}, {name: 'categoryId'}),
+            shoppingListValidator(),
+            controller.createList);
 
-router.put('/update/:listId', tokenInterceptor, objectIdValidator('userId', 'listId'), controller.updateList);
+router.put('/update/:listId',
+            tokenInterceptor,
+            objectIdValidator({name: 'userId'}, {name: 'listId'}),
+            controller.updateList);
 
-router.delete('/delete/:listId', tokenInterceptor, objectIdValidator('userId', 'listId'), controller.removeList);
+router.delete('/delete/:listId',
+              tokenInterceptor,
+              objectIdValidator({name: 'userId'}, {name: 'listId'}),
+              controller.removeList);
 
 export default router;

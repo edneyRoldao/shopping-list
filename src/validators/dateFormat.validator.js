@@ -1,7 +1,7 @@
-import mongoose from 'mongoose';
 import { checkSchema } from 'express-validator';
+import DateUtil from "../utils/date.util";
 
-const ObjectId = mongoose.Types.ObjectId;
+const dateUtil = new DateUtil();
 
 export default (...fields) => {
     const objValidator = {};
@@ -9,14 +9,14 @@ export default (...fields) => {
     fields.forEach(field => {
         objValidator[field['name']] = {
             custom: {
-                errorMessage: `the ${field['name']} format is invalid. It should be a string with 12 bytes or 24 hex characters`,
+                errorMessage: `the field: ${field['name']} must be a date with the following format: ${dateUtil.getDefaultFormat()}`,
                 options: value => {
                     const isRequired = (field['required'] === undefined || field['required']);
                     if (typeof value === 'undefined') return !isRequired;
-                    return ObjectId.isValid(value);
+                    return dateUtil.checkFormatDate(value);
                 }
             }
-        };
+        }
     });
 
     return checkSchema(objValidator);

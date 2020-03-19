@@ -23,7 +23,7 @@ const shoppingListItem = new Schema({
     url: {
         type: String,
         required: false,
-        min: 3,
+        min: 6,
         max: 4000
     },
     listId: {
