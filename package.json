@@ -9,7 +9,7 @@
     "transpile": "babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
     "server": "node ./dist/server.js",
     "startServer": "npm run clean && npm run transpile && npm run server",
-    "start": "nodemon --exec npm run startServer"
+    "start": "nodemon --ext js,ejs,json,css,png,jpeg --exec npm run startServer"
   },
   "repository": {
     "type": "git",
@@ -31,14 +31,18 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "ejs": "^3.0.1",
     "express": "^4.17.1",
     "express-validator": "^6.4.0",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.24.0",
     "mongoose": "^5.9.4"
   },
   "nodemonConfig": {
     "watch": [
-      "src"
+      "src",
+      "server.js",
+      "package.json"
     ]
   }
 }

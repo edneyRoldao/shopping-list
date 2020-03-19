@@ -1,4 +1,6 @@
 import CategoryModel from '../models/category.model';
+import mongoose from "mongoose";
+const ObjectId = mongoose.Types.ObjectId;
 
 export default class CategoryService {
 
@@ -30,6 +32,16 @@ export default class CategoryService {
 
     findAll() {
         return CategoryModel.find();
+    }
+
+    getOne(id) {
+        const isValid = ObjectId.isValid(id);
+
+        if (isValid) {
+            return CategoryModel.findOne({_id: id}) || {};
+        }
+
+        return {}
     }
 
 }

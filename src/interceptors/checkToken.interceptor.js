@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
 
 export default (req, res, next) => {
     const token = req.header(process.env.TOKEN_HEADER_NAME);
@@ -8,10 +8,12 @@ export default (req, res, next) => {
     }
 
     try {
-        jwt.verify(token, process.env.TOKEN_SECRET);
+        const user = jwt.verify(token, process.env.TOKEN_SECRET);
+        req.body.userId = user.userId;
         next();
 
     } catch (err) {
         return res.status(500).json({errorMessage: 'Invalid token!'});
     }
+
 }

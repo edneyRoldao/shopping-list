@@ -47,3 +47,5 @@ Shopping list impl
     
 how to stop server port on windows
 netstat -ano | findstr port
+
+https://www.sitepoint.com/build-simple-beginner-app-node-bootstrap-mongodb/

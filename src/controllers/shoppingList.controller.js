@@ -2,6 +2,8 @@ import { validationResult } from "express-validator";
 import UserModel from "../models/user.model";
 import CategoryModel from '../models/category.model';
 import ShoppingListModel from '../models/shoppingList.model';
+import mongoose from "mongoose";
+const ObjectId = mongoose.Types.ObjectId;
 
 
 export default class ShoppingListController {
@@ -14,7 +16,7 @@ export default class ShoppingListController {
                 return res.status(400).json(errors);
             }
 
-            const user = await UserModel.findOne({ _id: req.params.userId });
+            const user = await UserModel.findOne({ _id: req.body.userId });
 
             if (!user) {
                 return res.status(400).json({errorMessage: 'user does not exist !'});
@@ -41,7 +43,7 @@ export default class ShoppingListController {
         }
     }
 
-    async list(req, res) {
+    async getAllLists(req, res) {
         try {
             const errors = validationResult(req);
 
@@ -49,9 +51,30 @@ export default class ShoppingListController {
                 return res.status(400).json(errors);
             }
 
-            const userId = req.params.userId;
-            const list = await ShoppingListModel.find({ userId });
-            return res.status(200).json(list);
+            const filter = {
+                userId: req.body.userId
+            };
+
+            if (req.query.description) {
+                filter.description = { $regex: `.*${req.query.description}.*` };
+            }
+
+            if (req.query.categoryId) {
+                const isInvalid = !ObjectId.isValid(req.query.categoryId);
+
+                if (isInvalid) {
+                    return res.status(400).json({errorMessage: 'categoryId is invalid. It should be a string with 12 bytes or 24 hex characters'})
+                }
+
+                filter.categoryId = req.query.categoryId;
+            }
+
+            if (req.query.created) {
+                filter.created = req.query.created;
+            }
+
+            const lists = await ShoppingListModel.find(filter);
+            return res.status(200).json(lists || []);
 
         } catch (err) {
             console.log(err);
@@ -59,7 +82,7 @@ export default class ShoppingListController {
         }
     }
 
-    async delete(req, res) {
+    async getOneList(req, res) {
         try {
             const errors = validationResult(req);
 
@@ -67,9 +90,28 @@ export default class ShoppingListController {
                 return res.status(400).json(errors);
             }
 
-            const userId = req.params.userId;
+            const userId = req.body.userId;
             const listId = req.params.listId;
-            const listDeleted = await ShoppingListModel.findOneAndRemove({ _id: listId, userId: userId }).exec();
+            const list = await ShoppingListModel.findOne({ userId, _id: listId });
+            return res.status(200).json(list || {});
+
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json('there was an unexpected error when try to get a shopping list!');
+        }
+    }
+
+    async removeList(req, res) {
+        try {
+            const errors = validationResult(req);
+
+            if (!errors.isEmpty()) {
+                return res.status(400).json(errors);
+            }
+
+            const userId = req.body.userId;
+            const listId = req.params.listId;
+            const listDeleted = await ShoppingListModel.findOneAndRemove({ _id: listId, userId }).exec();
 
             if (listDeleted) {
                 return res.status(200).json({message: 'shopping list deleted'});
@@ -83,7 +125,7 @@ export default class ShoppingListController {
         }
     }
 
-    async getOne(req, res) {
+    async updateList(req, res) {
         try {
             const errors = validationResult(req);
 
@@ -91,24 +133,40 @@ export default class ShoppingListController {
                 return res.status(400).json(errors);
             }
 
-            const userId = req.params.userId;
-            const listId = req.params.listId;
+            const categoryUpdate = {};
 
-            const list = await ShoppingListModel.findOne({ _id: listId, userId: userId });
-            return res.status(200).json(list || []);
+            if (req.body.description) {
+                categoryUpdate.description = req.body.description;
+            }
+
+            if (req.body.categoryId) {
+                const isInvalid = !ObjectId.isValid(req.body.categoryId);
+
+                if (isInvalid) {
+                    return res.status(400).json({errorMessage: 'categoryId is invalid. It should be a string with 12 bytes or 24 hex characters'})
+                }
+
+                const newCategory = await CategoryModel.findOne({_id: req.body.categoryId}) || null;
+
+                if (!newCategory) {
+                    return res.status(400).json({errorMessage: 'category to be updated does not exist'});
+                }
+
+                categoryUpdate.categoryId = newCategory._id;
+            }
+
+            const userId = req.body.userId;
+            const listId = req.params.listId;
+            const listUpdated = await ShoppingListModel.updateOne({ userId, _id: listId }, categoryUpdate);
+
+            if (listUpdated) {
+                return res.status(200).json({message: 'shopping list was updated successfully'});
+            }
 
         } catch (err) {
             console.log(err);
-            return res.status(500).json('there was an error when try to get the list');
+            return res.status(500).json('app unable to update due to an error');
         }
-    }
-
-    async update(req, res) {
-
-    }
-
-    async filter(req, res) {
-
     }
 
 }

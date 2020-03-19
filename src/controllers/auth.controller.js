@@ -3,7 +3,6 @@ import jwt from 'jsonwebtoken';
 import UserModel from '../models/user.model';
 import { validationResult } from "express-validator";
 
-
 export default class AuthController {
 
     async register(req, res) {
@@ -13,7 +12,6 @@ export default class AuthController {
             return res.status(400).json(errors);
         }
 
-        // verificar se o email já existe
         const emailExist = await UserModel.findOne({email: req.body.email});
 
         if (emailExist) {
@@ -21,7 +19,6 @@ export default class AuthController {
         }
 
         try {
-            // encriptando a senha
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
@@ -49,21 +46,23 @@ export default class AuthController {
             return res.status(400).json(errors);
         }
 
-        // verificando se o usuario existe
         const user = await UserModel.findOne({email: req.body.email});
 
         if (!user) {
             return res.status(400).json({errorMessage: 'email or password invalid!'});
         }
 
-        // verificar se a senha esta correta
         const isPasswordValid = await bcrypt.compare(req.body.password, user.password);
 
         if (!isPasswordValid) {
             return res.status(400).json({errorMessage: 'email or password invalid!'});
         }
 
-        const payload = {user: user, permissions: ['all']};
+        const payload = {
+            userId: user._id,
+            userName: user.name,
+            userEmail: user.email
+        };
 
         const accessToken = jwt.sign(payload, process.env.TOKEN_SECRET);
 

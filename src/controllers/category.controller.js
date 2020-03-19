@@ -3,7 +3,7 @@ const service = new CategoryService();
 
 export default class CategoryController {
 
-    async list(req, res) {
+    async categoriesList(req, res) {
         try {
             const categories = await service.findAll();
             return res.status(200).json(categories);

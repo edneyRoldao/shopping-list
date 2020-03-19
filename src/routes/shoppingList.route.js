@@ -8,16 +8,25 @@ const router = express.Router();
 import ShoppingListController from '../controllers/shoppingList.controller';
 const controller = new ShoppingListController();
 
-router.post('/create/:userId', tokenInterceptor, shoppingListValidator(), controller.createList);
+/**
+ * Note:
+ *  - All request must have a Authentication header and its value is a JWT
+ *  - userId is retrieved from JWT and will be attached to request body via tokenInterceptor
+ */
 
-router.get('/:userId', tokenInterceptor, objectIdValidator('userId'), controller.list);
+/**
+ * this resource supports filter as queryParams
+ * FIELDS: description, categoryId, created
+ *
+ */
+router.get('/', tokenInterceptor, objectIdValidator('userId'), controller.getAllLists);
 
-router.get('/:userId/filter', objectIdValidator('userId'), controller.filter);
+router.get('/:listId', tokenInterceptor, objectIdValidator('userId', 'listId'), controller.getOneList);
 
-router.get('/:userId/item/:listId', objectIdValidator('userId'), objectIdValidator('listId'), controller.getOne);
+router.post('/create', tokenInterceptor, objectIdValidator('userId', 'categoryId'), shoppingListValidator(), controller.createList);
 
-router.put('/:userId/update/:listId', objectIdValidator('userId'), objectIdValidator('listId'), controller.update);
+router.put('/update/:listId', tokenInterceptor, objectIdValidator('userId', 'listId'), controller.updateList);
 
-router.delete('/:userId/delete/:listId', tokenInterceptor, objectIdValidator('userId'), objectIdValidator('listId'), controller.delete);
+router.delete('/delete/:listId', tokenInterceptor, objectIdValidator('userId', 'listId'), controller.removeList);
 
 export default router;

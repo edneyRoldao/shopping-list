@@ -5,9 +5,10 @@ import shoppingListItemRoute from '../routes/shoppingListItem.route';
 
 export default (app) => {
 
-    app.use('/auth', authRoute);
-    app.use('/categories', categoryRoute);
-    app.use('/shopping-list', shoppingListRoute);
-    app.use('/shopping-list', shoppingListItemRoute);
+    app.use('/api/auth', authRoute);
+    app.use('/api/categories', categoryRoute);
+    app.use('/api/shopping-list', shoppingListRoute);
+    app.use('/api/shopping-list-item', shoppingListItemRoute);
 
+    app.get('*', (req, res) => res.render('notFound'));
 }

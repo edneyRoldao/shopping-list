@@ -1,6 +1,6 @@
 import systemVariables from 'dotenv';
-import dev from '../environments/environment.dev';
-import prd from '../environments/environment.prd';
+import dev from './environments/environment.dev';
+import prd from './environments/environment.prd';
 
 const config = () => {
     const env = {};
