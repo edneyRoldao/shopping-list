@@ -2,6 +2,7 @@ import { validationResult } from "express-validator";
 import ShoppingListModel from '../models/shoppingList.model';
 import ShoppingListItemModel from '../models/shoppingListItem.model';
 import DateUtil from "../utils/date.util";
+import PagedSearchUtil from "../utils/pagedSearch.util";
 
 export default class ShoppingListItemController {
 
@@ -66,9 +67,48 @@ export default class ShoppingListItemController {
         }
     }
 
-    // todo - needs to be implemented
     async getPagedShoppingListItems(req, res) {
+        try {
+            const errors = validationResult(req);
 
+            if (!errors.isEmpty()) {
+                return res.status(400).json(errors);
+            }
+
+            let pageSize = 10;
+            let pageNumber = 1;
+
+            if (req.query.pageSize) {
+                pageSize = parseInt(req.query.pageSize);
+            }
+
+            if (req.query.pageNumber) {
+                pageNumber = parseInt(req.query.pageNumber);
+            }
+
+            const filter = filterBuilder(req);
+            const total = ShoppingListItemModel.countDocuments(filter);
+
+            const initIndex = (pageNumber - 1) * pageSize;
+
+            if (total < initIndex) {
+
+            }
+
+            const itemsList = await ShoppingListItemModel
+                .find(filter)
+                .limit(pageSize)
+                .skip(initIndex)
+                .exec();
+
+            const pagedSearchUtil = new PagedSearchUtil();
+            const pagedResult = pagedSearchUtil.getPagedObject(pageSize, pageNumber, total, itemsList);
+            return res.status(200).json(pagedResult);
+
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json('there was an unexpected error when try to paged list items!');
+        }
     }
 
     async updateItemList(req, res) {

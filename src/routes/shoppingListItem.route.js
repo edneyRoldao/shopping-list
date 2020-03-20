@@ -2,6 +2,7 @@ import express from 'express';
 import tokenInterceptor from '../interceptors/checkToken.interceptor';
 import objectIdValidator from '../validators/objectId.validator';
 import dateFormatValidator from "../validators/dateFormat.validator";
+import pagedSearchValidator from '../validators/pagedSearch.validator';
 import itemListFilterValidator from '../validators/itemListFilter.validator';
 import itemListCreateValidator from '../validators/itemListCreate.validator';
 import itemListUpdateValidator from '../validators/itemListUpdate.validator';
@@ -34,6 +35,7 @@ router.get('/paged/:listId',
             objectIdValidator({name: 'listId'}, {name: 'userId'}),
             dateFormatValidator({name: 'created', required: false}),
             itemListFilterValidator(),
+            pagedSearchValidator(),
             controller.getPagedShoppingListItems);
 
 router.put('/update/:itemListId',
