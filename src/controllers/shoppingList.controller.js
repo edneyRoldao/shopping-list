@@ -1,10 +1,8 @@
-import { validationResult } from "express-validator";
+import DateUtil from "../utils/date.util";
 import UserModel from "../models/user.model";
+import { validationResult } from "express-validator";
 import CategoryModel from '../models/category.model';
 import ShoppingListModel from '../models/shoppingList.model';
-import mongoose from "mongoose";
-const ObjectId = mongoose.Types.ObjectId;
-import DateUtil from "../utils/date.util";
 
 export default class ShoppingListController {
 
@@ -35,7 +33,7 @@ export default class ShoppingListController {
             });
 
             const shoppingListSaved = await shoppingList.save();
-            return res.status(201).json({listId: shoppingListSaved._id});
+            return res.status(201).json(shoppingListSaved);
 
         } catch (err) {
             console.log(err);
@@ -113,39 +111,37 @@ export default class ShoppingListController {
                 return res.status(400).json(errors);
             }
 
-            const categoryUpdate = {};
+            const userId = req.body.userId;
+            const listId = req.params.listId;
+
+            const shoppingList = await ShoppingListModel.findOne({ userId, _id: listId });
+
+            if (!shoppingList) {
+                return res.status(400).json({errorMessage: 'shopping-list to be updated does not exist'});
+            }
+
+            const shoppingListUpdate = {};
 
             if (req.body.description) {
-                categoryUpdate.description = req.body.description;
+                shoppingListUpdate.description = req.body.description;
             }
 
             if (req.body.categoryId) {
-                const isInvalid = !ObjectId.isValid(req.body.categoryId);
-
-                if (isInvalid) {
-                    return res.status(400).json({errorMessage: 'categoryId is invalid. It should be a string with 12 bytes or 24 hex characters'})
-                }
-
                 const newCategory = await CategoryModel.findOne({_id: req.body.categoryId}) || null;
 
                 if (!newCategory) {
                     return res.status(400).json({errorMessage: 'category to be updated does not exist'});
                 }
 
-                categoryUpdate.categoryId = newCategory._id;
+                shoppingListUpdate.categoryId = newCategory._id;
             }
 
-            const userId = req.body.userId;
-            const listId = req.params.listId;
-            const listUpdated = await ShoppingListModel.updateOne({ userId, _id: listId }, categoryUpdate);
-
-            if (listUpdated) {
-                return res.status(200).json({message: 'shopping list was updated successfully'});
-            }
+            const listUpdated = await ShoppingListModel.updateOne({ userId, _id: listId }, shoppingListUpdate);
+            return res.status(200).json({message: 'shopping list was updated successfully', shoppingList: listUpdated});
 
         } catch (err) {
             console.log(err);
-            return res.status(500).json('app unable to update due to an error');
+            return res.status(500).json('app unable to update shopping-list due to an error');
         }
     }
 

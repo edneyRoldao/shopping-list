@@ -24,7 +24,7 @@ const controller = new ShoppingListController();
 router.get('/',
             tokenInterceptor,
             objectIdValidator({name: 'userId'}, {name: 'categoryId', required: false}),
-            dateFormatValidator({name: 'created', required: true}),
+            dateFormatValidator({name: 'created', required: false}),
             controller.getAllLists);
 
 router.get('/:listId',
@@ -40,7 +40,7 @@ router.post('/create',
 
 router.put('/update/:listId',
             tokenInterceptor,
-            objectIdValidator({name: 'userId'}, {name: 'listId'}),
+            objectIdValidator({name: 'userId'}, {name: 'listId'}, {name: 'categoryId', required: false}),
             controller.updateList);
 
 router.delete('/delete/:listId',
