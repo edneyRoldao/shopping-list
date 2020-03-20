@@ -1,1 +1,1 @@
-# shopping-list project
+# shopping-list nodeJS project
