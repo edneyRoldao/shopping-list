@@ -18,4 +18,4 @@ const categorySchema =new mongoose.Schema({
     }
 });
 
-export default mongoose.model('code-activation', categorySchema);
+export default mongoose.model('activation-code', categorySchema);
