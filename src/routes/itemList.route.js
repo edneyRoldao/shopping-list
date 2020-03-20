@@ -6,28 +6,28 @@ import pagedSearchValidator from '../validators/pagedSearch.validator';
 import itemListFilterValidator from '../validators/itemListFilter.validator';
 import itemListCreateValidator from '../validators/itemListCreate.validator';
 import itemListUpdateValidator from '../validators/itemListUpdate.validator';
-import ShoppingListItemController from "../controllers/shoppingListItem.controller";
+import ItemListController from "../controllers/itemListController";
 
 const router = express.Router();
-const controller = new ShoppingListItemController();
+const controller = new ItemListController();
 
 router.post('/add',
             tokenInterceptor,
             objectIdValidator({name: 'userId'}, {name: 'listId'}),
             itemListCreateValidator(),
-            controller.insertShoppingListItems);
+            controller.insertItemList);
 
 router.get('/:itemListId',
             tokenInterceptor,
             objectIdValidator({name: 'itemListId'}, {name: 'userId'}),
-            controller.getShoppingListItem);
+            controller.getItemList);
 
 router.get('/filter/:listId',
             tokenInterceptor,
             objectIdValidator({name: 'listId'}, {name: 'userId'}),
             dateFormatValidator({name: 'created', required: false}),
             itemListFilterValidator(),
-            controller.getShoppingListItems);
+            controller.getItemsList);
 
 // todo - needs to be refactored
 router.get('/paged/:listId',
@@ -36,7 +36,7 @@ router.get('/paged/:listId',
             dateFormatValidator({name: 'created', required: false}),
             itemListFilterValidator(),
             pagedSearchValidator(),
-            controller.getPagedShoppingListItems);
+            controller.getPagedItemsList);
 
 router.put('/update/:itemListId',
             tokenInterceptor,
@@ -47,6 +47,6 @@ router.put('/update/:itemListId',
 router.delete('/delete/:itemListId',
             tokenInterceptor,
             objectIdValidator({name: 'itemListId'}, {name: 'userId'}),
-            controller.removeShoppingListItem);
+            controller.removeItemList);
 
 export default router;

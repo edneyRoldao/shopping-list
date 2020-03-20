@@ -1,12 +1,12 @@
 import { validationResult } from "express-validator";
 import ShoppingListModel from '../models/shoppingList.model';
-import ShoppingListItemModel from '../models/shoppingListItem.model';
+import ItemListModel from '../models/itemList.model';
 import DateUtil from "../utils/date.util";
 import PagedSearchUtil from "../utils/pagedSearch.util";
 
-export default class ShoppingListItemController {
+export default class ItemListController {
 
-    async insertShoppingListItems(req, res)  {
+    async insertItemList(req, res)  {
         try {
             const errors = validationResult(req);
 
@@ -21,9 +21,9 @@ export default class ShoppingListItemController {
             }
 
             delete req.body.userId;
-            const shoppingListItem = new ShoppingListItemModel(req.body);
-            const shoppingListItemSaved = await shoppingListItem.save();
-            return res.status(201).json(shoppingListItemSaved);
+            const itemList = new ItemListModel(req.body);
+            const itemListSaved = await itemList.save();
+            return res.status(201).json(itemListSaved);
 
         } catch (err) {
             console.log(err);
@@ -31,7 +31,7 @@ export default class ShoppingListItemController {
         }
     }
 
-    async getShoppingListItem(req, res) {
+    async getItemList(req, res) {
         try {
             const errors = validationResult(req);
 
@@ -39,7 +39,7 @@ export default class ShoppingListItemController {
                 return res.status(400).json(errors);
             }
 
-            const itemList = await ShoppingListItemModel.findOne({ _id: req.params.itemListId });
+            const itemList = await ItemListModel.findOne({ _id: req.params.itemListId });
             return res.status(200).json(itemList || {});
 
         } catch (err) {
@@ -48,7 +48,7 @@ export default class ShoppingListItemController {
         }
     }
 
-    async getShoppingListItems(req, res) {
+    async getItemsList(req, res) {
         try {
             const errors = validationResult(req);
 
@@ -58,7 +58,7 @@ export default class ShoppingListItemController {
 
             const filter = filterBuilder(req);
 
-            const itemsList = await ShoppingListItemModel.find(filter);
+            const itemsList = await ItemListModel.find(filter);
             return res.status(200).json(itemsList || []);
 
         } catch (err) {
@@ -67,7 +67,7 @@ export default class ShoppingListItemController {
         }
     }
 
-    async getPagedShoppingListItems(req, res) {
+    async getPagedItemsList(req, res) {
         try {
             const errors = validationResult(req);
 
@@ -87,7 +87,7 @@ export default class ShoppingListItemController {
             }
 
             const filter = filterBuilder(req);
-            const total = ShoppingListItemModel.countDocuments(filter);
+            const total = ItemListModel.countDocuments(filter);
 
             const initIndex = (pageNumber - 1) * pageSize;
 
@@ -95,7 +95,7 @@ export default class ShoppingListItemController {
 
             }
 
-            const itemsList = await ShoppingListItemModel
+            const itemsList = await ItemListModel
                 .find(filter)
                 .limit(pageSize)
                 .skip(initIndex)
@@ -119,7 +119,7 @@ export default class ShoppingListItemController {
                 return res.status(400).json(errors);
             }
 
-            const itemList = await ShoppingListItemModel.findOne({ _id: req.params.itemListId });
+            const itemList = await ItemListModel.findOne({ _id: req.params.itemListId });
 
             if (!itemList) {
                 return res.status(400).json({errorMessage: 'item list to be updated does not exist'});
@@ -137,7 +137,7 @@ export default class ShoppingListItemController {
                 itemListUpdate.listId = newShoppingList._id;
             }
 
-            const itemListUpdated = await ShoppingListItemModel.updateOne({ _id: req.params.itemListId }, itemListUpdate);
+            const itemListUpdated = await ItemListModel.updateOne({ _id: req.params.itemListId }, itemListUpdate);
             return res.status(200).json({message: 'item list was updated successfully', itemList: itemListUpdated});
 
         } catch (err) {
@@ -146,7 +146,7 @@ export default class ShoppingListItemController {
         }
     }
 
-    async removeShoppingListItem(req, res) {
+    async removeItemList(req, res) {
         try {
             const errors = validationResult(req);
 
@@ -154,7 +154,7 @@ export default class ShoppingListItemController {
                 return res.status(400).json(errors);
             }
 
-            const itemListDeleted = await ShoppingListItemModel
+            const itemListDeleted = await ItemListModel
                 .findOneAndRemove({_id: req.params.itemListId})
                 .exec();
 

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-const shoppingListItem = new Schema({
+const itemList = new Schema({
     amount: {
         type: Number,
         default: 1
@@ -36,4 +36,4 @@ const shoppingListItem = new Schema({
     }
 });
 
-export default mongoose.model('shopping-list-item', shoppingListItem);
+export default mongoose.model('item-list', itemList);
