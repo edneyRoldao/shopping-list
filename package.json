@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rimraf dist/",
     "transpile": "babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
     "server": "node ./dist/server.js",
@@ -31,13 +30,13 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "dotenv-expand": "^5.1.0",
     "ejs": "^3.0.1",
     "express": "^4.17.1",
     "express-validator": "^6.4.0",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
     "mongoose": "^5.9.4",
-    "node-code-generator": "^1.0.3",
     "nodemailer": "^6.4.5"
   },
   "nodemonConfig": {

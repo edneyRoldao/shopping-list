@@ -12,6 +12,10 @@ router.post('/register', userValidator(), controller.register);
 
 router.post('/login', loginValidator(), controller.login);
 
+router.post('/token', controller.getRefreshToken);
+
+router.delete('logout', controller.logout);
+
 router.post('/activation', activationAccountValidator('requestActivation'), controller.sendCodeActivation);
 
 router.post('/activate', activationAccountValidator(), controller.activateAccount);

@@ -44,4 +44,8 @@ export default class CategoryService {
         return {}
     }
 
+    async getTotal() {
+        return await CategoryModel.countDocuments();
+    }
+
 }

@@ -1,7 +1,12 @@
-import CodeGenerator from 'node-code-generator';
-const codeGenerator = new CodeGenerator();
+const characters = 'QWE0RTY1UIO2PAS3DFG4HJK5LZX6CVB7NMq8wer9tyu0iop1asd2fgh3jkl4zxc5vbn6m';
 
 export default (size = 6) => {
-    const codes = codeGenerator.generateCodes('*+', size);
-    return codes.join('');
+    let code = '';
+
+    for (let i = 0; i < size; i++) {
+        const randomNumber = Math.floor(Math.random() * characters.length);
+        code += characters.charAt(randomNumber)
+    }
+
+    return code;
 }

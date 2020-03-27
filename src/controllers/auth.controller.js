@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import DateUtil from "../utils/date.util";
 import UserModel from '../models/user.model';
 import { validationResult } from "express-validator";
+import RefreshTokenModel from '../models/refreshToken.model';
 import ActivationCodeModel from '../models/activationCode.model';
 import CodeActivationService from "../services/codeActivation.service";
 
@@ -69,17 +70,31 @@ export default class AuthController {
             return res.status(400).json({errorMessage: 'email or password invalid!'});
         }
 
-        const payload = {
-            userId: user._id,
-            userName: user.name,
-            userEmail: user.email
-        };
+        const payload = { userId: user._id, userName: user.name, userEmail: user.email };
 
-        const accessToken = jwt.sign(payload, process.env.TOKEN_SECRET);
+        const accessToken = generateAccessToken(payload);
+        const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET);
 
-        res.header(process.env.TOKEN_HEADER_NAME, accessToken);
+        const refreshTokenModel = new RefreshTokenModel({ refreshToken });
+        const refreshTokenSaved = await refreshTokenModel.save();
 
-        return res.status(200).json({ userId: user._id });
+        return res.status(200).json({ accessToken, refreshToken: refreshTokenSaved.refreshToken, tokenType: 'Bearer' });
+    }
+
+    async logout(req, res) {
+        const refreshToken = req.body.refreshToken;
+
+        if (!refreshToken) {
+            return res.status(400).json({errorMessage: 'refreshToken field inside body is required'});
+        }
+
+        const tokenDeleted = await RefreshTokenModel.findOneAndRemove({refreshToken}).exec();
+
+        if (tokenDeleted) {
+            return res.status(200).json({message: 'refresh token deleted deleted!'});
+        }
+
+        return res.status(400).json({message: 'there is no token to be removed!'});
     }
 
     async sendCodeActivation(req, res) {
@@ -152,6 +167,30 @@ export default class AuthController {
 
     }
 
+    async getRefreshToken(req, res) {
+        const refreshToken = req.body.refreshToken;
+
+        if (!refreshToken) {
+            return res.status(400).json({errorMessage: 'refreshToken field inside body is required'});
+        }
+
+        const contains = await RefreshTokenModel.countDocuments({refreshToken});
+
+        if (!contains) {
+            return res.status(403).json({errorMessage: 'refresh token does not exist'});
+        }
+
+        try {
+            const user = await jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+            const accessToken = generateAccessToken(user);
+            return res.status(200).json({accessToken});
+
+        } catch (err) {
+            return res.status(403).json({ errorMessage: 'refresh token is not valid' });
+        }
+
+    }
+
     async disableAccount(req, res) {
         try {
             const errors = validationResult(req);
@@ -187,4 +226,8 @@ export default class AuthController {
 
     }
 
+}
+
+function generateAccessToken(user) {
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1800s'});
 }

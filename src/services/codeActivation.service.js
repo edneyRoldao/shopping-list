@@ -9,7 +9,7 @@ export default class CodeActivationService {
             const codeActivation = new ActivationCodeModel({ email });
             const codeActivationSaved = await codeActivation.save();
             const codeAsArray = codeActivationSaved.code.split('');
-            const code = codeAsArray.join(' ');
+            const code = codeAsArray.join('  ');
 
             const emailOptions = {
                 email,
