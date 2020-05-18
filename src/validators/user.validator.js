@@ -4,7 +4,7 @@ export default () => {
     return checkSchema({
         name: {
             exists: {
-                errorMessage: 'O NOME DEVE SER INFORMADO',
+                errorMessage: 'The name is required',
             },
             isString: {
                 errorMessage: 'name should be a text',
