@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
-import codeGenerator from '../utils/codeGenerator.util';
 
-const categorySchema =new mongoose.Schema({
+const activationCodeSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
@@ -14,8 +13,8 @@ const categorySchema =new mongoose.Schema({
     },
     code: {
         type: String,
-        default: codeGenerator()
+        required: true
     }
 });
 
-export default mongoose.model('activation-code', categorySchema);
+export default mongoose.model('activation-code', activationCodeSchema);

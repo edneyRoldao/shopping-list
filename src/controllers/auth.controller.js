@@ -145,7 +145,7 @@ export default class AuthController {
                 return res.status(400).json({ errorMessage: 'User already activated' });
             }
 
-            const activation = ActivationCodeModel.findOne({ email, code });
+            const activation = await ActivationCodeModel.findOne({ email, code });
 
             if (!activation) {
                 return res.status(400).json({ errorMessage: 'activation code does not match' });
@@ -157,8 +157,13 @@ export default class AuthController {
                 return res.status(400).json({ errorMessage: 'activation code is expired. Please Generate another code' });
             }
 
-            UserModel.updateOne({_id: user._id}, { active: true });
-            return res.status(201).json({ errorMessage: 'User has been activated' });
+            const userUpdated = await UserModel.updateOne({_id: user._id}, { active: true });
+
+            if (!userUpdated) {
+                return res.status(500).json({ errorMessage: 'there was an error' });
+            }
+
+            return res.status(201).json({ message: 'User has been activated' });
 
         } catch (err) {
             console.log(err);
